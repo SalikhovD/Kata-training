@@ -14,7 +14,7 @@ public class MathExpression {
     }
 
     //Возвращает результат вычисления выражения
-    public void calc() throws CalcExeption {
+    public void calc() throws CalcException {
         char MathSymbol = recognizeSymbol(expression);
         int[] args = recognizeArgs(expression);
         switch (MathSymbol) {
@@ -34,24 +34,24 @@ public class MathExpression {
     }
 
     //Возвращает символ математической операции в выражении
-    private static char recognizeSymbol(String expression) throws CalcExeption {
+    private static char recognizeSymbol(String expression) throws CalcException {
         Pattern p = Pattern.compile("[/+*-]");
         Matcher m = p.matcher(expression);
-        //Если найден один знак, то возвращает его, если больше или меньше одного, то кидает Exeption
+        //Если найден один знак, то возвращает его, если больше или меньше одного, то кидает Exception
         if (m.find()) {
             String str = m.group();
             if (m.find()) {
-                throw new CalcExeption("Выражение должно быть формата NUM [+-/*] NUM");
+                throw new CalcException("Выражение должно быть формата NUM [+-/*] NUM");
             } else {
                 return str.charAt(0);
             }
         } else {
-            throw new CalcExeption("Строка не является математическим выражением или запрошена неподдерживаемая математическая операция");
+            throw new CalcException("Строка не является математическим выражением или запрошена неподдерживаемая математическая операция");
         }
     }
 
     //Возвращает массив из двух операндов выражения
-    private static int[] recognizeArgs(String expression) throws CalcExeption {
+    private static int[] recognizeArgs(String expression) throws CalcException {
         String[] strArgs = expression.split("[+-/*]");
         int[] result = new int[2];
         if (isRoman(expression)) {
@@ -61,20 +61,20 @@ public class MathExpression {
                 result[0] = Digit.valueOf(strArgs[0]).getArabic();
                 result[1] = Digit.valueOf(strArgs[1]).getArabic();
             } catch (Exception e) {
-                throw new CalcExeption("Калькулятор принимает на вход только числа от 1 до 10 включительно");
+                throw new CalcException("Калькулятор принимает на вход только числа от 1 до 10 включительно");
             }
         } else {
             try {
                 result[0] = Integer.parseInt(strArgs[0]);
                 result[1] = Integer.parseInt(strArgs[1]);
             } catch (Exception e) {
-                throw new CalcExeption("Строка не является математическим выражением или запрошена неподдерживаемая математическая операция");
+                throw new CalcException("Строка не является математическим выражением или запрошена неподдерживаемая математическая операция");
             }
 
         }
         //Проверяем, находятся ли записанные операнды в диапазоне [1-10]
         if (result[0] > 10 | result[1] > 10 | result[0] < 1 | result[1] < 1) {
-            throw new CalcExeption("Калькулятор принимает на вход только числа от 1 до 10 включительно");
+            throw new CalcException("Калькулятор принимает на вход только числа от 1 до 10 включительно");
         }
         return result;
     }
@@ -93,11 +93,11 @@ public class MathExpression {
     }
 
     //Возвращает true, если выражение записано в формате римских цифр
-    private static boolean isRoman(String expression) throws CalcExeption {
+    private static boolean isRoman(String expression) throws CalcException {
         if (expression.matches(".*[IVXCLDM].*")) {
-            //Если выражение содержит и римские и арабские цифры, то кидаем Exeption
+            //Если выражение содержит и римские и арабские цифры, то кидаем Exception
             if (expression.matches(".*[1234567890].*")) {
-                throw new CalcExeption("Можно использовать только римские или арабские числа одновременно");
+                throw new CalcException("Можно использовать только римские или арабские числа одновременно");
             }
             return true;
         }
@@ -105,10 +105,10 @@ public class MathExpression {
     }
 
     //Выводит в консоль результат вычисления
-    public void printResult() throws CalcExeption {
+    public void printResult() throws CalcException {
         if (isRoman(expression)) {
             if (result < 1) {
-                throw new CalcExeption("Результатом работы калькулятора с римскими числами могут быть только положительные числа");
+                throw new CalcException("Результатом работы калькулятора с римскими числами могут быть только положительные числа");
             }
             System.out.println(toRoman(result));
         } else {
