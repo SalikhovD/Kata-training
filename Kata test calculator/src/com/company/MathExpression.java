@@ -9,8 +9,12 @@ public class MathExpression {
     int result;
 
     MathExpression(String expression) {
-        //Номализуем выражение: убираем лишние пробелы и переводим символы в верхний регистр
+        //Номализуем выражение: убираем лишние пробелы и переводим символы в верхний регистр, стираем '+' у первого операнда
         this.expression = expression.replaceAll(" ", "").toUpperCase(Locale.ROOT);
+        if (this.expression.charAt(0) == '+') {
+            this.expression = this.expression.replaceFirst("\\+", "");
+        }
+        checkNegative();
     }
 
     //Возвращает результат вычисления выражения
@@ -30,6 +34,15 @@ public class MathExpression {
             case ('*'):
                 result = args[0] * args[1];
                 break;
+        }
+    }
+
+    //Выкидывает Exception, если в аргументе присутствуют отрицательные числа
+    private void checkNegative() throws CalcException {
+        if (expression.charAt(0) == '-') {
+            expression = expression.replaceFirst("-", "");
+            recognizeArgs(expression);
+            throw new CalcException("Калькулятор принимает на вход только числа от 1 до 10 включительно");
         }
     }
 
@@ -53,6 +66,9 @@ public class MathExpression {
     //Возвращает массив из двух операндов выражения
     private static int[] recognizeArgs(String expression) throws CalcException {
         String[] strArgs = expression.split("[+-/*]");
+        if (strArgs.length != 2) {
+            throw new CalcException("Выражение должно быть формата NUM [+-/*] NUM");
+        }
         int[] result = new int[2];
         if (isRoman(expression)) {
             //Проверяем, присутствуют ли введенные римские цифры в Enum
